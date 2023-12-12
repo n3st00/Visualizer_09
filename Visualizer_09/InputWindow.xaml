@@ -1,0 +1,38 @@
+﻿<Window x:Class="Visualizer_09.InputWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Visualizer_09"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="InputWindow" Height="210" Width="300">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="10">
+                <TextBlock Text="Enter Index:"/>
+                <TextBox x:Name="indexTextBox" Width="200"/>
+
+                <TextBlock Text="Enter Content:"/>
+                <TextBox x:Name="contentTextBox" Width="200"/>
+                <TextBlock Text="Enter Text(optional):"/>
+                <TextBox x:Name="textTextBox" Width="200" AcceptsReturn="True"/>
+
+                <TextBlock Text="Select Option:"/>
+                <ComboBox x:Name="optionsComboBox" Width="200">
+                    <ComboBoxItem Content="Subject"/>
+                    <ComboBoxItem Content="Topic"/>
+                    <ComboBoxItem Content="Example"/>
+                    <ComboBoxItem Content="Task"/>
+                    <ComboBoxItem Content="Theorem"/>
+                </ComboBox>
+
+
+
+
+                <Button Content="OK" Click="OkButton_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
+            </StackPanel>
+        </ScrollViewer>
+        
+    </Grid>
+</Window>
