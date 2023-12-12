@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.RightsManagement;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,12 +13,25 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.IO;
+using System.Text.Json;
+
 using Visualizer_09;
 using static System.Net.Mime.MediaTypeNames;
 using static Visualizer_09.MainWindow;
 
 namespace Visualizer_09
 {
+    public class ItemsCollection
+    {
+        public Dictionary<string, Dictionary<string, object>> NamedItems { get; set; }
+
+        public ItemsCollection()
+        {
+            NamedItems = new Dictionary<string, Dictionary<string, object>>();
+        }
+    }
+
     public partial class MainWindow : Window
     {
         public List<string> StringList { get; set; }
@@ -25,7 +39,7 @@ namespace Visualizer_09
         public ObservableCollection<GraphPoint> pointsCollection = new ObservableCollection<GraphPoint>();
         private List<Thumb> thumbs = new List<Thumb>();
         public List<ThumbObjectLink> ThumbObjectLinks { get; set; }
-
+        public List<ComboBoxItem> NewTypesItems { get; set; }
 
         private Canvas canvas;
         private bool isDragging = false;
@@ -51,7 +65,7 @@ namespace Visualizer_09
         {
             public double x { get; set; }
             public double y { get; set; }
-            public int Type { get; set; }
+            public string Type { get; set; }
             public string Content { get; set; }
             public List<string> Connections { get; set; }
             public string Index { get; set; }
@@ -105,6 +119,7 @@ namespace Visualizer_09
             //collections defining
             pointsCollection = new ObservableCollection<GraphPoint>();
             ThumbObjectLinks = new List<ThumbObjectLink>();
+            NewTypesItems = new List<ComboBoxItem>();
 
             InitializeComponent();
 
@@ -114,26 +129,55 @@ namespace Visualizer_09
             };
             WireUpEventHandlers(); // Call this method to wire up event handlers
 
-
             WindowState = WindowState.Maximized;
-            /*GraphPoint point = new GraphPoint();
-            point.x = 100;
-            point.y = 100;
-            point.type = 0;
-            point.Content = "i like mcqueen";
-            point.Index = "khehe";
-            pointsCollection.Add(point);*/
 
             ExplorerLB.ItemsSource = pointsCollection;
-
-
-            //LinkThumbsWithObjects();
-            // Draw an editable graph
             DrawEditableGraph();
 
 
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            var itemsCollection = new ItemsCollection();
+            itemsCollection.NamedItems["type1"] = new Dictionary<string, object>
+            {
+                { "color", "colorstring" },
+                { "property2", "property2string" }
+            
+            };
+            itemsCollection.NamedItems["Alice"] = new Dictionary<string, object>
+            {
+                { "Age", "30" },
+                { "Address", "456 Oak St" },
+                { "Occupation", "Engineer" }            
+            };
+
+            string jsonData = JsonSerializer.Serialize(itemsCollection);
+
+            // write to the properties.json file
+            File.WriteAllText("properties.json", jsonData);
+
+
+            // read from the properties.json file
+            string loadedJsonData = File.ReadAllText("properties.json");
+
+            // convert the json format to the objects
+            ItemsCollection loadedItemsCollection = JsonSerializer.Deserialize<ItemsCollection>(loadedJsonData);
+
+            if (loadedItemsCollection.NamedItems.TryGetValue("type1", out var johnParameters))
+            {
+                string johnAge = johnParameters["color"].ToString();
+                string johnAddress = (string)johnParameters["property2"].ToString();
+
+                textblockoutput.Text = johnAge;
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
-        public int AddElement(int type, string content, string index, string text, string answer)
+        public int AddElement(string type, string content, string index, string text, string answer)
         {
             //0 - Subject
             //1 - Topic
@@ -200,9 +244,22 @@ namespace Visualizer_09
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
 
-            InputWindow inputWindow = new InputWindow();
+            InputWindow inputWindow = new InputWindow(this);
+            ComboBox comboBoxInInputWindow = inputWindow.typesComboBox;
+            foreach (ComboBoxItem item in NewTypesItems)
+            {
+                ComboBoxItem newItem = new ComboBoxItem
+                {
+                    Content = item.Content,
+                    // Copy any other properties or settings as needed
+                };
+                if (!comboBoxInInputWindow.Items.Contains(newItem))
+                {
+                    comboBoxInInputWindow.Items.Add(newItem);
+                }
+            }
             inputWindow.ShowDialog();
-
+            
 
             if (inputWindow.DialogResult == true && CheckInput(inputWindow.IndexInput))
             {
@@ -222,7 +279,7 @@ namespace Visualizer_09
 
 
 
-                    int ret_obj = AddElement(0, contentInput, indexInput, textInput, null);
+                    int ret_obj = AddElement("0", contentInput, indexInput, textInput, null);
                     pointsCollection[ret_obj].Width = 130.0 + 3.4 * length;
                     pointsCollection[ret_obj].Height = 100 + 1.1 * length;
                     pointsCollection[ret_obj].Color = brush;
@@ -233,7 +290,7 @@ namespace Visualizer_09
                 {
                     Color color = (Color)ColorConverter.ConvertFromString("#9dc183");
                     SolidColorBrush brush = new SolidColorBrush(color);
-                    int ret_obj = AddElement(0, contentInput, indexInput, textInput, null);
+                    int ret_obj = AddElement("1", contentInput, indexInput, textInput, null);
                     pointsCollection[ret_obj].Width = (width + 10) + 1.5 * length;
                     pointsCollection[ret_obj].Height = height + 5;
                     pointsCollection[ret_obj].Color = brush;
@@ -244,7 +301,7 @@ namespace Visualizer_09
                 {
                     Color color = (Color)ColorConverter.ConvertFromString("#b3ff00");
                     SolidColorBrush brush = new SolidColorBrush(color);
-                    int ret_obj = AddElement(0, contentInput, indexInput, textInput, null);
+                    int ret_obj = AddElement("2", contentInput, indexInput, textInput, null);
                     pointsCollection[ret_obj].Width = width + 1.5 * length;
                     pointsCollection[ret_obj].Height = height;
                     pointsCollection[ret_obj].Color = brush;
@@ -255,7 +312,7 @@ namespace Visualizer_09
                 {
                     Color color = (Color)ColorConverter.ConvertFromString("#ff8800");
                     SolidColorBrush brush = new SolidColorBrush(color);
-                    int ret_obj = AddElement(0, contentInput, indexInput, textInput, null);
+                    int ret_obj = AddElement("3", contentInput, indexInput, textInput, null);
                     pointsCollection[ret_obj].Width = (width - 5) + 1.5 * length;
                     pointsCollection[ret_obj].Height = height - 2;
                     pointsCollection[ret_obj].Color = brush;
@@ -266,7 +323,7 @@ namespace Visualizer_09
                 {
                     Color color = (Color)ColorConverter.ConvertFromString("#ffd000");
                     SolidColorBrush brush = new SolidColorBrush(color);
-                    int ret_obj = AddElement(0, contentInput, indexInput, textInput, null);
+                    int ret_obj = AddElement("4", contentInput, indexInput, textInput, null);
                     pointsCollection[ret_obj].Width = width;
                     pointsCollection[ret_obj].Height = height;
                     pointsCollection[ret_obj].Color = brush;
@@ -275,7 +332,21 @@ namespace Visualizer_09
                 }
                 else
                 {
-                    MessageBox.Show("You've provided wrong input.");
+                    string heretype;
+                    foreach (ComboBoxItem item in NewTypesItems) 
+                    {
+                        if(item.Content == selectedOption)
+                        {
+                            Color color = (Color)ColorConverter.ConvertFromString("#ffd500");
+                            SolidColorBrush brush = new SolidColorBrush(color);
+                            int ret_obj = AddElement(selectedOption, contentInput, indexInput, textInput, null);
+                            pointsCollection[ret_obj].Width = width;
+                            pointsCollection[ret_obj].Height = height;
+                            pointsCollection[ret_obj].Color = brush;
+                            Thumb ret_thumb = CreateEditablePoint(0, 0, pointsCollection[ret_obj].Width, pointsCollection[ret_obj].Height, contentInput, brush, pointsCollection[ret_obj]);
+                            canvas.Children.Add(ret_thumb);
+                        }
+                    }
                 }
 
 
@@ -737,9 +808,7 @@ namespace Visualizer_09
             // Check if the Shift key is pressed
             bool isShiftPressed = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 
-            // Select or deselect the Thumb based on the Shift key state
-            
-                // Add the Thumb to the selection
+
             thumb.IsSelected = true;
             selectedThumbs.Add(thumb);
             ControlTemplate thumbTemplate2 = new ControlTemplate(typeof(Thumb));
@@ -929,7 +998,20 @@ namespace Visualizer_09
             }
         }
 
+        private void NewClassButton_Click(object sender, RoutedEventArgs e)
+        {
+            NewClassWindow classWindow = new NewClassWindow();
+            classWindow.ShowDialog();
 
+            List<string> list = classWindow.customProperties;
+            foreach(string property in list) 
+            { 
+            }
+            string TypeName = classWindow.typeName;
+            ComboBoxItem newType = new ComboBoxItem();
+            newType.Content = TypeName;
+            NewTypesItems.Add(newType);
+        }
     }
 
 }

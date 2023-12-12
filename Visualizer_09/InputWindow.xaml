@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:Visualizer_09"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="InputWindow" Height="210" Width="300">
+        Title="InputWindow" Height="220" Width="350">
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="10">
+            <StackPanel x:Name="stackPanel" Margin="10">
                 <TextBlock Text="Enter Index:"/>
                 <TextBox x:Name="indexTextBox" Width="200"/>
 
@@ -19,7 +19,7 @@
                 <TextBox x:Name="textTextBox" Width="200" AcceptsReturn="True"/>
 
                 <TextBlock Text="Select Option:"/>
-                <ComboBox x:Name="optionsComboBox" Width="200">
+                <ComboBox x:Name="optionsComboBox" Width="200" >
                     <ComboBoxItem Content="Subject"/>
                     <ComboBoxItem Content="Topic"/>
                     <ComboBoxItem Content="Example"/>
@@ -30,7 +30,7 @@
 
 
 
-                <Button Content="OK" Click="OkButton_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,10,0,0"/>
+               
             </StackPanel>
         </ScrollViewer>
         

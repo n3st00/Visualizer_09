@@ -1,6 +1,11 @@
-﻿using System.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Windows;
+using Microsoft.Extensions.Configuration;
+
+
 
 namespace Visualizer_09
 {
@@ -9,6 +14,7 @@ namespace Visualizer_09
     /// </summary>
     public partial class App : Application
     {
+        
     }
 
 }

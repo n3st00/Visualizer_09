@@ -13,24 +13,50 @@ namespace Visualizer_09
 
         public string TextInput { get; private set; }
 
-        public InputWindow()
+        public MainWindow MainWindowReference { get; set; }
+
+
+        private Button okbutton = new Button()
+        {
+            Name = "OkButton",
+            Content = "OK",
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Bottom,
+            Margin = new Thickness(0, 10, 0, 0)
+        };
+        public InputWindow(MainWindow mainWindow)
         {
             InitializeComponent();
+            stackPanel.Children.Add(okbutton);
+            okbutton.Click += OkButton_Click;
             IndexInput = string.Empty;
+
+            MainWindowReference = mainWindow;
+        }
+
+        public ComboBox typesComboBox
+        {
+            get { return optionsComboBox; }
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            // Set the DialogResult to true and close the window
-            IndexInput = indexTextBox.Text;
-            ContentInput = contentTextBox.Text;
-            TextInput = textTextBox.Text;
-            SelectedType = (optionsComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
-            DialogResult = true;
+            try
+            {
+                IndexInput = indexTextBox.Text;
+                ContentInput = contentTextBox.Text;
+                TextInput = textTextBox.Text;
+                SelectedType = (optionsComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                DialogResult = true;
 
-
-            Close();
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}");
+            }
         }
 
+        
     }
 }

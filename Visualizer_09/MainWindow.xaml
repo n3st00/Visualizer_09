@@ -38,6 +38,7 @@
             <Border Background="LightBlue">
                 <!-- first subwindow content -->
             </Border>
+            <Button Name="NewClassButton" Content="New Class" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="50" Click="NewClassButton_Click"></Button>
             <StackPanel VerticalAlignment="Bottom">
                 <TextBlock x:Name="textblockoutput" HorizontalAlignment="Left" VerticalAlignment="Center" Text="StartText"></TextBlock>
                 <Button Name="UnconntectButton" HorizontalAlignment="Left" Content="Unconnect" Width="50" Height="20" Click="UnconnectButton_Click"/>
@@ -103,34 +104,37 @@
                 <!-- third subwindow content -->
             </Border>
 
-            <ListBox Name="ExplorerLB" SelectionMode="Multiple" BorderBrush="Transparent" MouseDown="ListBox_MouseDown" SelectionChanged="ExplorerLB_SelectionChanged">
-                <ListBox.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#526274" Offset="0.0" />
-                        <GradientStop Color="#5C748D" Offset="1.0" />
-                    </LinearGradientBrush>
-                </ListBox.Background>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListBox.ItemContainerStyle>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border HorizontalAlignment="Stretch">
-                            <Border.Background>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="#5C748D" Offset="0.0" />
-                                    <GradientStop Color="#5e6f82" Offset="1.0" />
-                                    <!--//526274-->
-                                </LinearGradientBrush>
-                            </Border.Background>
-                            <TextBlock Text="{Binding Content}" HorizontalAlignment="Left" Margin="5"/>
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ListBox Name="ExplorerLB" SelectionMode="Multiple" BorderBrush="Transparent" MouseDown="ListBox_MouseDown" SelectionChanged="ExplorerLB_SelectionChanged">
+                    <ListBox.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#526274" Offset="0.0" />
+                            <GradientStop Color="#5C748D" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </ListBox.Background>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border HorizontalAlignment="Stretch">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#5C748D" Offset="0.0" />
+                                        <GradientStop Color="#5e6f82" Offset="1.0" />
+                                        <!--//526274-->
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <TextBlock Text="{Binding Content}" HorizontalAlignment="Left" Margin="5"/>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
 
-            </ListBox>
+                </ListBox>
+                </ScrollViewer>
+               
 
 
             <TextBlock Name="outputTextBlock" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,147,0,0" />
