@@ -31,6 +31,7 @@ namespace Visualizer_09
             okbutton.Click += OkButton_Click;
             IndexInput = string.Empty;
 
+
             MainWindowReference = mainWindow;
         }
 
@@ -41,20 +42,13 @@ namespace Visualizer_09
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                IndexInput = indexTextBox.Text;
-                ContentInput = contentTextBox.Text;
-                TextInput = textTextBox.Text;
-                SelectedType = (optionsComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
-                DialogResult = true;
-
-                Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred: {ex.Message}");
-            }
+            IndexInput = indexTextBox.Text;
+            ContentInput = contentTextBox.Text;
+            TextInput = textTextBox.Text;
+            SelectedType = (optionsComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            
+            DialogResult = true;
+            Close();
         }
 
         

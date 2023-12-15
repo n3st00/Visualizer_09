@@ -1,0 +1,53 @@
+﻿<Window x:Class="Visualizer_09.DetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Visualizer_09"
+        mc:Ignorable="d"
+        Title="DetailsWindow" Height="450" Width="800">
+    <Grid>
+
+
+        <Grid.ColumnDefinitions>
+            <!-- column 1: first subwindow start -->
+            <ColumnDefinition Width="150" SharedSizeGroup="A" MinWidth="50" />
+
+            <!-- column 2: GridSplitter for resizing between subwindow 1 and 2 -->
+            <ColumnDefinition Width="Auto" />
+
+            <!-- column 3: second subwindow start -->
+            <ColumnDefinition Width="*" SharedSizeGroup="B" MinWidth="50" />
+        </Grid.ColumnDefinitions>
+
+        <!-- first subwindow -->
+        <Grid Grid.Column="0" Name="FirstSubwindow" Panel.ZIndex="1">
+            <Border Background="LightBlue">
+                <!-- first subwindow content -->
+            </Border>
+            
+        </Grid>
+
+        <!-- first GridSplitter -->
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Panel.ZIndex="1"/>
+
+
+
+        <!-- second subwindow -->
+        <Grid Grid.Column="2" Name="SecondSubwindow">
+            <Border>
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#8f8f8f" Offset="0.0" />
+                        <GradientStop Color="#7d7d7d" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <!-- second subwindow content -->
+            </Border>
+
+
+
+        </Grid>
+
+    </Grid>
+</Window>

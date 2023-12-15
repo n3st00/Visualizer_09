@@ -39,8 +39,8 @@ namespace Visualizer_09
         public ObservableCollection<GraphPoint> pointsCollection = new ObservableCollection<GraphPoint>();
         private List<Thumb> thumbs = new List<Thumb>();
         public List<ThumbObjectLink> ThumbObjectLinks { get; set; }
-        public List<ComboBoxItem> NewTypesItems { get; set; }
 
+        public List<string> propertiesForJohn { get; set; }
         private Canvas canvas;
         private bool isDragging = false;
         private Point lastMousePosition;
@@ -119,7 +119,6 @@ namespace Visualizer_09
             //collections defining
             pointsCollection = new ObservableCollection<GraphPoint>();
             ThumbObjectLinks = new List<ThumbObjectLink>();
-            NewTypesItems = new List<ComboBoxItem>();
 
             InitializeComponent();
 
@@ -134,33 +133,33 @@ namespace Visualizer_09
             ExplorerLB.ItemsSource = pointsCollection;
             DrawEditableGraph();
 
+            
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            var itemsCollection = new ItemsCollection();
+            /*var itemsCollection = new ItemsCollection();
             itemsCollection.NamedItems["type1"] = new Dictionary<string, object>
             {
                 { "color", "colorstring" },
                 { "property2", "property2string" }
-            
+
             };
             itemsCollection.NamedItems["Alice"] = new Dictionary<string, object>
             {
                 { "Age", "30" },
                 { "Address", "456 Oak St" },
-                { "Occupation", "Engineer" }            
+                { "Occupation", "Engineer" }
             };
 
             string jsonData = JsonSerializer.Serialize(itemsCollection);
 
             // write to the properties.json file
             File.WriteAllText("properties.json", jsonData);
-
+*/
 
             // read from the properties.json file
-            string loadedJsonData = File.ReadAllText("properties.json");
+            /*string loadedJsonData = File.ReadAllText("properties.json");
 
             // convert the json format to the objects
             ItemsCollection loadedItemsCollection = JsonSerializer.Deserialize<ItemsCollection>(loadedJsonData);
@@ -171,8 +170,7 @@ namespace Visualizer_09
                 string johnAddress = (string)johnParameters["property2"].ToString();
 
                 textblockoutput.Text = johnAge;
-            }
-
+            }*/
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -241,23 +239,25 @@ namespace Visualizer_09
             return isOK;
         }
 
-        private void AddButton_Click(object sender, RoutedEventArgs e)
+        public void AddButton_Click(object sender, RoutedEventArgs e)
         {
 
             InputWindow inputWindow = new InputWindow(this);
             ComboBox comboBoxInInputWindow = inputWindow.typesComboBox;
-            foreach (ComboBoxItem item in NewTypesItems)
+            string existingJsonData = File.ReadAllText("properties.json");
+            var existingItemsCollection = JsonSerializer.Deserialize<ItemsCollection>(existingJsonData);
+
+            foreach (var namedItem in existingItemsCollection.NamedItems)
             {
-                ComboBoxItem newItem = new ComboBoxItem
+                ComboBoxItem comboitem = new ComboBoxItem
                 {
-                    Content = item.Content,
-                    // Copy any other properties or settings as needed
+                    Content = namedItem.Key
                 };
-                if (!comboBoxInInputWindow.Items.Contains(newItem))
-                {
-                    comboBoxInInputWindow.Items.Add(newItem);
-                }
+                comboBoxInInputWindow.Items.Add(comboitem);
             }
+
+            comboBoxInInputWindow.Items.Add("testthing");
+            
             inputWindow.ShowDialog();
             
 
@@ -272,7 +272,7 @@ namespace Visualizer_09
 
                 int width = 100;
                 int height = 70;
-                if (selectedOption == "Subject")
+                if (selectedOption == "Subject" || selectedOption == null)
                 {
                     Color color = (Color)ColorConverter.ConvertFromString("#2713a1");
                     SolidColorBrush brush = new SolidColorBrush(color);
@@ -330,22 +330,29 @@ namespace Visualizer_09
                     Thumb ret_thumb = CreateEditablePoint(0, 0, pointsCollection[ret_obj].Width, pointsCollection[ret_obj].Height, contentInput, brush, pointsCollection[ret_obj]);
                     canvas.Children.Add(ret_thumb);
                 }
-                else
+                else //if (selectedOption != null && existingItemsCollection.NamedItems.ContainsKey(selectedOption))
                 {
-                    string heretype;
-                    foreach (ComboBoxItem item in NewTypesItems) 
+                    foreach (var item in existingItemsCollection.NamedItems)
                     {
-                        if(item.Content == selectedOption)
+                        if (item.Key == selectedOption)
                         {
-                            Color color = (Color)ColorConverter.ConvertFromString("#ffd500");
+                            Color color = (Color)ColorConverter.ConvertFromString("#ffd000");
                             SolidColorBrush brush = new SolidColorBrush(color);
-                            int ret_obj = AddElement(selectedOption, contentInput, indexInput, textInput, null);
+                            int ret_obj = AddElement(item.Key, contentInput, indexInput, textInput, null);
+                            
                             pointsCollection[ret_obj].Width = width;
                             pointsCollection[ret_obj].Height = height;
                             pointsCollection[ret_obj].Color = brush;
                             Thumb ret_thumb = CreateEditablePoint(0, 0, pointsCollection[ret_obj].Width, pointsCollection[ret_obj].Height, contentInput, brush, pointsCollection[ret_obj]);
                             canvas.Children.Add(ret_thumb);
+                        } else
+                        {
+                            if(selectedOption == null)
+                            {
+                                MessageBox.Show("selectedoption is null");
+                            }
                         }
+                        
                     }
                 }
 
@@ -1003,14 +1010,51 @@ namespace Visualizer_09
             NewClassWindow classWindow = new NewClassWindow();
             classWindow.ShowDialog();
 
-            List<string> list = classWindow.customProperties;
-            foreach(string property in list) 
-            { 
-            }
+            List<string> propertiesForJohn = classWindow.customProperties;
+
             string TypeName = classWindow.typeName;
             ComboBoxItem newType = new ComboBoxItem();
             newType.Content = TypeName;
-            NewTypesItems.Add(newType);
+
+
+
+            string existingJsonData = File.ReadAllText("properties.json");
+            var existingItemsCollection = JsonSerializer.Deserialize<ItemsCollection>(existingJsonData);
+
+            if (existingItemsCollection.NamedItems.ContainsKey(TypeName))
+            {
+                foreach (string property in propertiesForJohn)
+                {
+                    if (!existingItemsCollection.NamedItems[TypeName].ContainsKey(property))
+                    {
+                        existingItemsCollection.NamedItems[TypeName][property] = "Space";
+                    }
+                }
+            }
+            else
+            {
+                // If the key "type1" doesn't exist, create a new entry
+                existingItemsCollection.NamedItems[TypeName] = new Dictionary<string, object>();
+                foreach (string property in propertiesForJohn)
+                {
+                    existingItemsCollection.NamedItems[TypeName][property] = "Space";
+                }
+            }
+
+            string updatedJsonData = JsonSerializer.Serialize(existingItemsCollection);
+            File.WriteAllText("properties.json", updatedJsonData);
+
+            /*var itemsCollection = new ItemsCollection();
+            itemsCollection.NamedItems[TypeName] = new Dictionary<string, object>();
+            foreach (string property in propertiesForJohn)
+            {
+                itemsCollection.NamedItems[TypeName].Add(property, "string");
+            }
+            string jsonData = JsonSerializer.Serialize(itemsCollection);
+            File.WriteAllText("properties.json", jsonData);
+*/
+
+            
         }
     }
 
