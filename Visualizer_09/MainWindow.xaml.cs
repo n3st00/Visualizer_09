@@ -19,6 +19,7 @@ using System.Text.Json;
 using Visualizer_09;
 using static System.Net.Mime.MediaTypeNames;
 using static Visualizer_09.MainWindow;
+using System.Xaml;
 
 namespace Visualizer_09
 {
@@ -41,6 +42,7 @@ namespace Visualizer_09
         public List<ThumbObjectLink> ThumbObjectLinks { get; set; }
 
         public List<string> propertiesForJohn { get; set; }
+        private List<string> pointsParameters { get; set; }
         private Canvas canvas;
         private bool isDragging = false;
         private Point lastMousePosition;
@@ -1229,6 +1231,28 @@ namespace Visualizer_09
             string jsonData = JsonSerializer.Serialize(itemsCollection);
             File.WriteAllText("properties.json", jsonData);
 */
+
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (ThumbObjectLink link in ThumbObjectLinks)
+            {
+                Thumb thumb1 = link.Thumb;
+                GraphPoint obj = link.AssociatedObject as GraphPoint;
+                obj.x = Canvas.GetLeft(thumb1);
+                obj.y = Canvas.GetTop(thumb1);
+            }
+            List<string> pointsParameters = new List<string>();
+            List<GraphPoint> objectList = new List<GraphPoint>();
+            string existingJsonData = File.ReadAllText("PointsCollection.json");
+            var existingItemsCollection = JsonSerializer.Deserialize<ItemsCollection>(existingJsonData);
+            foreach (GraphPoint point in pointsCollection)
+            {
+                objectList.Add(point);
+            }
+            string jsonString = JsonSerializer.Serialize(objectList);
+            File.WriteAllText("PointsCollection.json", jsonString);
 
             
         }
