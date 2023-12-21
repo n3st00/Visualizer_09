@@ -46,6 +46,9 @@ namespace Visualizer_09
         private Point lastMousePosition;
         private double canvasWidth;
         private double canvasHeight;
+        private Grid grid_canvas;
+        private List<Thumb> thumb_to_delete { get; set; }
+        private List<Line> line_to_delete { get; set; }
 
 
         LinearGradientBrush linearGradientBrush = new LinearGradientBrush();
@@ -112,6 +115,8 @@ namespace Visualizer_09
 
         public MainWindow()
         {
+            thumb_to_delete = new List<Thumb>();
+            line_to_delete = new List<Line>();
             //defining the gradient color
             linearGradientBrush.StartPoint = new System.Windows.Point(0.5, 0);
             linearGradientBrush.EndPoint = new System.Windows.Point(0.5, 1);
@@ -140,7 +145,7 @@ namespace Visualizer_09
             canvasWidth = canvas.ActualWidth;
             canvasHeight = canvas.ActualHeight;
 
-
+            CreateGrid();
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -572,12 +577,55 @@ namespace Visualizer_09
                 }
 
                 // Apply the scaling factor within the specified range
-                scaleTransform.ScaleX = Math.Max(0.5, Math.Min(2, scaleTransform.ScaleX * scale));
-                scaleTransform.ScaleY = Math.Max(0.5, Math.Min(2, scaleTransform.ScaleY * scale));
+                scaleTransform.ScaleX = Math.Max(0.25, Math.Min(2, scaleTransform.ScaleX * scale));
+                scaleTransform.ScaleY = Math.Max(0.25, Math.Min(2, scaleTransform.ScaleY * scale));
             }
         }
 
+        /*private void CreateGrid() 
+        {
+            for (int i = 1; i < 500; i++)
+            {
+                for(int k = 1; k < 500; k++)
+                {
+                    Ellipse ellipse = new Ellipse
+                    {
+                        Width = 1,
+                        Height = 1,
+                        Fill = Brushes.Red
+                    };
+                    canvas.Children.Add(ellipse);
+                    Canvas.SetLeft(ellipse, k * 10);
+                    Canvas.SetTop(ellipse, i * 10);
+                }
 
+            }
+        }*/
+
+        private void CreateGrid()
+        {
+            Color color = (Color)ColorConverter.ConvertFromString("#1a1a1a");
+            SolidColorBrush brush = new SolidColorBrush(color);
+            for (int i = 0; i <= 98; i++)
+            {
+                for (int j = 0; j <= 98; j++)
+                {
+                    Ellipse ellipse = new Ellipse
+                    {
+                        Width = 5,
+                        Height = 5,
+                        Fill = brush
+                    };
+
+                    // Set the position of the ellipse
+                    Canvas.SetLeft(ellipse, i * 50);
+                    Canvas.SetTop(ellipse, j * 50);
+
+                    // Add the ellipse to the canvas
+                    canvas.Children.Add(ellipse);
+                }
+            }
+        }
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
@@ -1012,7 +1060,27 @@ namespace Visualizer_09
         private void ConnectThumbs()
         {
             // Clear existing lines
-            canvas.Children.Clear();
+            foreach (UIElement element in canvas.Children)
+            {
+                if(element is Line line)
+                {
+                    line_to_delete.Add(line);
+
+                } else if (element is Thumb thumb)
+                {
+                    thumb_to_delete.Add(thumb);
+                }
+            }
+            foreach (Thumb thumb in thumb_to_delete)
+            {
+                canvas.Children.Remove(thumb);
+            }
+            foreach (Line line in line_to_delete)
+            {
+                canvas.Children.Remove(line);
+            }
+            thumb_to_delete.Clear();
+            line_to_delete.Clear();
 
             // Draw lines between thumbs
             for (int i = 0; i < ThumbObjectLinks.Count; i++)
