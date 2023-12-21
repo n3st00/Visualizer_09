@@ -45,7 +45,9 @@
                 <!-- second subwindow content -->
             </Border>
 
-
+            <ScrollViewer Name ="scrollViewer">
+                
+            </ScrollViewer>
 
         </Grid>
 

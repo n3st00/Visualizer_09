@@ -44,6 +44,8 @@ namespace Visualizer_09
         private Canvas canvas;
         private bool isDragging = false;
         private Point lastMousePosition;
+        private double canvasWidth;
+        private double canvasHeight;
 
 
         LinearGradientBrush linearGradientBrush = new LinearGradientBrush();
@@ -113,8 +115,8 @@ namespace Visualizer_09
             //defining the gradient color
             linearGradientBrush.StartPoint = new System.Windows.Point(0.5, 0);
             linearGradientBrush.EndPoint = new System.Windows.Point(0.5, 1);
-            linearGradientBrush.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#6B7A8F"), 0.0)); //FF100585 //#6B7A8F
-            linearGradientBrush.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#7897AB"), 1.0)); //230ff7    //#7897AB
+            linearGradientBrush.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#1d2124"), 0.0)); //FF100585 //#6B7A8F
+            linearGradientBrush.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#1c2124"), 1.0)); //230ff7    //#7897AB
 
             //collections defining
             pointsCollection = new ObservableCollection<GraphPoint>();
@@ -122,18 +124,22 @@ namespace Visualizer_09
 
             InitializeComponent();
 
+            SolidColorBrush brush = (SolidColorBrush)new BrushConverter().ConvertFromString("#68747a");
             canvas = new Canvas
             {
-                Background = linearGradientBrush
+                Background = brush
             };
+            canvas.Width = 5000;
+            canvas.Height = 5000;
             WireUpEventHandlers(); // Call this method to wire up event handlers
 
             WindowState = WindowState.Maximized;
 
             ExplorerLB.ItemsSource = pointsCollection;
             DrawEditableGraph();
+            canvasWidth = canvas.ActualWidth;
+            canvasHeight = canvas.ActualHeight;
 
-            
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -364,6 +370,7 @@ namespace Visualizer_09
                 {
                     Thumb thumb1 = link.Thumb;
                     EventManager.RegisterClassHandler(typeof(Thumb), UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(Thumb_MouseLeftButtonUp));
+
                 }
 
 
@@ -479,17 +486,97 @@ namespace Visualizer_09
             canvas.MouseDown += Canvas_MouseDown;
             canvas.MouseMove += Canvas_MouseMove;
             canvas.MouseUp += Canvas_MouseUp;
+            canvas.MouseWheel += Canvas_MouseWheel;
         }
 
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             textblockoutput.Text = "Canvas_MouseDown got triggered";
+            /*isDragging = true;
+            lastMousePosition = e.GetPosition(canvas);*/
             isDragging = true;
+            canvas.CaptureMouse();
             lastMousePosition = e.GetPosition(canvas);
             canvas.CaptureMouse();
             DeselectAllThumbs();
             DeselectAllItems();
         }
+
+
+        // Assuming you set canvasWidth and canvasHeight somewhere, such as in the window constructor.
+
+
+        /*private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDragging)
+            {
+                Point currentMousePosition = e.GetPosition(canvas);
+                double offsetX = currentMousePosition.X - lastMousePosition.X;
+                double offsetY = currentMousePosition.Y - lastMousePosition.Y;
+
+                foreach (UIElement element in canvas.Children)
+                {
+                    if (element is Thumb)
+                    {
+                        double left = Canvas.GetLeft(element);
+                        double top = Canvas.GetTop(element);
+
+                        // Ensure the element stays within the canvas bounds
+                        double newLeft = Math.Max(0, Math.Min(canvas.ActualWidth - element.RenderSize.Width, left + offsetX));
+                        double newTop = Math.Max(0, Math.Min(canvas.ActualHeight - element.RenderSize.Height, top + offsetY));
+
+                        Canvas.SetLeft(element, newLeft);
+                        Canvas.SetTop(element, newTop);
+                    }
+                    else if (element is Line)
+                    {
+                        // Handle dragging for lines
+                        Line line = element as Line;
+                        line.X1 += offsetX;
+                        line.Y1 += offsetY;
+                        line.X2 += offsetX;
+                        line.Y2 += offsetY;
+                    }
+                }
+
+                lastMousePosition = currentMousePosition;
+            }
+        }*/
+
+
+        private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (isDragging)
+            {
+                isDragging = false;
+                canvas.ReleaseMouseCapture();
+            }
+        }
+        private void Canvas_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var canvas = sender as Canvas;
+
+            if (canvas != null)
+            {
+                // Adjust the scaling factor as needed
+                double scale = (e.Delta > 0) ? 1.2 : 0.8; // You can adjust the scaling factors
+
+                // Apply scaling
+                ScaleTransform scaleTransform = canvas.LayoutTransform as ScaleTransform;
+
+                if (scaleTransform == null)
+                {
+                    // Create a new ScaleTransform if none exists
+                    scaleTransform = new ScaleTransform();
+                    canvas.LayoutTransform = scaleTransform;
+                }
+
+                // Apply the scaling factor within the specified range
+                scaleTransform.ScaleX = Math.Max(0.5, Math.Min(2, scaleTransform.ScaleX * scale));
+                scaleTransform.ScaleY = Math.Max(0.5, Math.Min(2, scaleTransform.ScaleY * scale));
+            }
+        }
+
 
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
@@ -525,12 +612,12 @@ namespace Visualizer_09
             }
         }
 
-        private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
+        /*private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
             isDragging = false;
             canvas.ReleaseMouseCapture();
         }
-
+*/
 
         private void ListBox_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -641,6 +728,8 @@ namespace Visualizer_09
 
             // Register the DragDelta event handler
             thumb.DragDelta += Thumb_DragDelta;
+            thumb.MouseDoubleClick += Thumb_MouseDoubleClick;
+
 
             ThumbObjectLink link = new ThumbObjectLink
             {
@@ -650,8 +739,11 @@ namespace Visualizer_09
 
             ThumbObjectLinks.Add(link);
 
-            Color color = (Color)ColorConverter.ConvertFromString("#4287f5");
+            Color color = (Color)ColorConverter.ConvertFromString("#303030");
             SolidColorBrush brush = new SolidColorBrush(color);
+            //#dedede
+            Color textColor = (Color)ColorConverter.ConvertFromString("#dedede");
+            SolidColorBrush textBrush = new SolidColorBrush(textColor);
             Rectangle roundedRectangle = new Rectangle
             {
                 Width = 220,
@@ -683,7 +775,7 @@ namespace Visualizer_09
                 
                 Text = obj.Content,
                 FontSize = 14,
-                Foreground = Brushes.Red,
+                Foreground = textBrush,
                 TextWrapping = TextWrapping.Wrap,
                 Width = 200,
                 Height = 50
@@ -692,8 +784,8 @@ namespace Visualizer_09
             {
 
                 Text = obj.Text,
-                FontSize = 14,
-                Foreground = Brushes.Red,
+                FontSize = 14.3,
+                Foreground = textBrush,
                 TextWrapping = TextWrapping.Wrap,
                 Width = 200,
                 Height = 285
@@ -713,18 +805,25 @@ namespace Visualizer_09
                 canvas.Children.Add(descriptionText);
                 if (obj.Content.Length <= 47)
                 {
-                    if(obj.Content.Length <= 20)
+                    if (obj.Content.Length <= 20)
                     {
                         contentText.FontSize = 18;
                     }
                     contentText.Text = obj.Content;
-                } else
+                }
+                else
                 {
                     string truncatedString = obj.Content.Length <= 47
                     ? obj.Content
                     : obj.Content.Substring(0, 47) + "...";
                     contentText.Text = truncatedString;
-                    
+                }
+                if (obj.Text.Length! <= 497)
+                {
+                    string truncatedString = obj.Text.Length <= 497
+                    ? obj.Text
+                    : obj.Text.Substring(0, 497) + "...";
+                    descriptionText.Text = truncatedString;
                 }
                 canvas.Children.Add(contentText);
                 timer.Stop();
@@ -772,6 +871,17 @@ namespace Visualizer_09
             return thumb;
         }
 
+        public void Thumb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            Thumb thumb = (Thumb)sender;
+            ThumbObjectLink thumbLink = ThumbObjectLink.GetLinkByThumb(ThumbObjectLinks, thumb);
+            GraphPoint obj = thumbLink.AssociatedObject;
+            textblockoutput.Text = "thumb mousclick detected";
+
+            DetailsWindow detailsWindow = new DetailsWindow();
+            detailsWindow.ShowDialog();
+        }
+
         private List<Thumb> selectedThumbs = new List<Thumb>();
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -812,8 +922,6 @@ namespace Visualizer_09
             ThumbObjectLink thumbLink = ThumbObjectLink.GetLinkByThumb(ThumbObjectLinks, thumb);
             GraphPoint obj = thumbLink.AssociatedObject;
             textblockoutput.Text = "some text";
-            // Check if the Shift key is pressed
-            bool isShiftPressed = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 
 
             thumb.IsSelected = true;

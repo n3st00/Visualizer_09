@@ -19,6 +19,11 @@ namespace Visualizer_09
     /// </summary>
     public partial class DetailsWindow : Window
     {
+
+        public ScrollViewer detailsScrollViewer
+        {
+            get { return scrollViewer; }
+        }
         public DetailsWindow()
         {
             InitializeComponent();

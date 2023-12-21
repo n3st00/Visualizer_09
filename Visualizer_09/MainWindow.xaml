@@ -35,47 +35,31 @@
 
         <!-- first subwindow -->
         <Grid Grid.Column="0" Name="FirstSubwindow" Panel.ZIndex="1">
-            <Border Background="LightBlue">
-                <!-- first subwindow content -->
+            <Border Background="#404b52">
+                
+
+
             </Border>
-            <Button Name="NewClassButton" Content="New Class" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="50" Click="NewClassButton_Click"></Button>
-            <StackPanel VerticalAlignment="Bottom">
+            
+            <StackPanel VerticalAlignment="Top">
                 <TextBlock x:Name="textblockoutput" HorizontalAlignment="Left" VerticalAlignment="Center" Text="StartText"></TextBlock>
-                <Button Name="UnconntectButton" HorizontalAlignment="Left" Content="Unconnect" Width="50" Height="20" Click="UnconnectButton_Click"/>
-                <Button Name="RemoveButton" HorizontalAlignment="Left" BorderBrush="Transparent"  Content="Remove"  VerticalAlignment="Bottom" Width="125" Height="50" Click="RemoveButton_Click">
-                    <Button.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#4f0816" Offset="0.0" />
-                            <GradientStop Color="#5c0415" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </Button.Background>
-                </Button>
+                <Button Name="AddButton" BorderBrush="Transparent" Content="+ Add" VerticalAlignment="Bottom" HorizontalContentAlignment="Stretch" Height="70" Click="AddButton_Click"/>
+                <Button Name="RemoveButton" Background="Red"  BorderBrush="Transparent"  Content="Remove"  VerticalAlignment="Bottom" HorizontalContentAlignment="Stretch" Height="70" Click="RemoveButton_Click"/>
+                <Button x:Name="ConnectButton" Content="Connect" Click="ConnectButton_Click" Height="70" HorizontalAlignment="Stretch" Margin="0, 30, 0, 0"/>
+                <Button Name="UnconntectButton" HorizontalAlignment="Stretch" Content="Unconnect" Height="70" Click="UnconnectButton_Click" />
+                <Button Name="NewClassButton" Content="New Class" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="70" Click="NewClassButton_Click" Margin="0, 30, 0, 0"></Button>
+
             </StackPanel>
-            <StackPanel VerticalAlignment="Bottom">
-                <Button x:Name="ConnectButton" Content="Connect" Click="ConnectButton_Click" Height="20" Width="50" HorizontalAlignment="Right"/>
-                <Button Name="AddButton" HorizontalAlignment="Right" BorderBrush="Transparent" Content="+ Add" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="125" Height="50" Click="AddButton_Click">
-                    <Button.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#024dc4" Offset="0.0" />
-                            <GradientStop Color="#0245b0" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </Button.Background>
-                </Button>
-            </StackPanel>
+            
         </Grid>
 
         <!-- first GridSplitter -->
-        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Panel.ZIndex="1"/>
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Panel.ZIndex="1" Background="#2b3033"/>
 
         <!-- second subwindow -->
         <Grid Grid.Column="2" Name="SecondSubwindow">
-            <Border>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#8f8f8f" Offset="0.0" />
-                        <GradientStop Color="#7d7d7d" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
+            <Border Background="#2980b9">
+                
                 <!-- second subwindow content -->
             </Border>
 
@@ -84,34 +68,19 @@
         </Grid>
 
         <!-- second GridSplitter -->
-        <GridSplitter Grid.Column="3" Width="5" HorizontalAlignment="Stretch" Background="Transparent"/>
+        <GridSplitter Grid.Column="3" Width="5" HorizontalAlignment="Stretch" Background="#2b3033"/>
 
         <!-- third subwindow -->
-        <Grid Grid.Column="4" Name="ThirdSubwindow">
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#526274" Offset="0.0" />
-                    <GradientStop Color="#5C748D" Offset="1.0" />
-                </LinearGradientBrush>
-            </Grid.Background>
-            <Border>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#526274" Offset="0.0" />
-                        <GradientStop Color="#5C748D" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
+        <Grid Grid.Column="4" Name="ThirdSubwindow" Background="#404b52">
+
+            <Border Background="#404b52">
+                
                 <!-- third subwindow content -->
             </Border>
 
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <ListBox Name="ExplorerLB" SelectionMode="Multiple" BorderBrush="Transparent" MouseDown="ListBox_MouseDown" SelectionChanged="ExplorerLB_SelectionChanged">
-                    <ListBox.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#526274" Offset="0.0" />
-                            <GradientStop Color="#5C748D" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </ListBox.Background>
+                <ListBox Name="ExplorerLB" SelectionMode="Multiple" BorderBrush="Transparent" MouseDown="ListBox_MouseDown" SelectionChanged="ExplorerLB_SelectionChanged" Background="#404b52">
+                    
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
